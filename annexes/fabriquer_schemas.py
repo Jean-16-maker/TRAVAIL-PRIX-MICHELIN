@@ -664,7 +664,7 @@ def decision(nom):
     c.append(boite(170, 10, 280, 54, ["Notre question de prix", "97,90 € ou 94,90 € ?"], fond=BLEU_FONCE, bord=BLEU_FONCE, texte="#fff"))
     c.append(boite(20, 110, 260, 70, ["Baisser à 94,90 € ?", "il faudrait +12,2 % de ventes ;", "prix non testé par le questionnaire"]))
     c.append(boite(340, 110, 260, 70, ["Garder 97,90 € : avec quel argument ?", "test A/B, 108 répondants"]))
-    c.append(boite(20, 230, 260, 56, ["Non : la baisse", "ne se paie pas (partie 5)"], fond="#F1F3F6", bord=NEUTRE))
+    c.append(boite(20, 230, 260, 56, ["Non : la baisse", "ne se paie pas (partie 4)"], fond="#F1F3F6", bord=NEUTRE))
     c.append(boite(320, 230, 135, 72, ["La marque seule", "45 % en version A", "rejetée"], fond="#F1F3F6", bord=NEUTRE, taille=11.5))
     c.append(boite(465, 230, 135, 72, ["La durée de vie", "67 % en version B", "validée"], fond="#E6F3EC", bord=OK, taille=11.5))
     c.append(boite(170, 350, 430, 70, ["Recommandation : maintenir 97,90 €", "et vendre la durée de vie, chiffrée (km, coût pour 10 000 km)",
@@ -686,12 +686,12 @@ SCHEMAS["decision"] = figure(1, "l'arbre de décision du dossier", decision("dec
 
 
 # ---- Les trois prix : par les coûts, par la concurrence, par la valeur ---------------------------------------------
-# Chaque terme vient d'une source du dossier ; la construction détaillée est écrite dans la partie 5 (proposition.html).
+# Chaque terme vient d'une source du dossier ; la construction détaillée est écrite dans la partie 4 (proposition.html).
 PRIX_ACTUEL, TVA, MARGE_DISTRIBUTEUR = 97.90, 0.20, 0.12          # Allopneus ; TVA ; Bsness (12 % du prix HT)
 VENTES_S1, COUT_REVIENT_S1, RD_S1, COMMERCIAUX_S1, GENERAUX_S1 = 13028, 9358, 396, 577, 1215   # M€, rapport semestriel 2025, p. 17
 MARGE_CIBLE = 0.117                                               # marge Automobile 2025 de Michelin (communiqué annuel)
 PLAFOND, HANKOOK_MARCHE = 93.20, 80.99                            # Continental et Hankook chez Allopneus, 1er octobre 2026
-HANKOOK_TEST, KM_HANKOOK, KM_MICHELIN = 81.99, 40000, 50000       # le scénario de notre test A/B (partie 4)
+HANKOOK_TEST, KM_HANKOOK, KM_MICHELIN = 81.99, 40000, 50000       # le scénario de notre test A/B (partie 3)
 
 net_actuel = PRIX_ACTUEL / (1 + TVA) * (1 - MARGE_DISTRIBUTEUR)      # ce que Michelin touche par pneu
 cout_complet = net_actuel * (COUT_REVIENT_S1 + RD_S1 + COMMERCIAUX_S1 + GENERAUX_S1) / VENTES_S1
