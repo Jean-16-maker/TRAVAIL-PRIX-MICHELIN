@@ -662,7 +662,7 @@ SCHEMAS["rentabilite"] = figure(15, "ce que vaut l'effet en euros : le gain net 
 def decision(nom):
     c = [defs_fleches(nom, [BLEU_FONCE, OK, NEUTRE])]
     c.append(boite(170, 10, 280, 54, ["Notre question de prix", "97,90 € ou 94,90 € ?"], fond=BLEU_FONCE, bord=BLEU_FONCE, texte="#fff"))
-    c.append(boite(20, 110, 260, 70, ["Baisser à 94,90 € ?", "il faudrait +12,2 % de ventes ;", "l'enquête en prévoit +11,6 %"]))
+    c.append(boite(20, 110, 260, 70, ["Baisser à 94,90 € ?", "il faudrait +12,2 % de ventes ;", "prix non testé par le questionnaire"]))
     c.append(boite(340, 110, 260, 70, ["Garder 97,90 € : avec quel argument ?", "test A/B, 108 répondants"]))
     c.append(boite(20, 230, 260, 56, ["Non : la baisse", "ne se paie pas (partie 5)"], fond="#F1F3F6", bord=NEUTRE))
     c.append(boite(320, 230, 135, 72, ["La marque seule", "45 % en version A", "rejetée"], fond="#F1F3F6", bord=NEUTRE, taille=11.5))
@@ -691,7 +691,6 @@ PRIX_ACTUEL, TVA, MARGE_DISTRIBUTEUR = 97.90, 0.20, 0.12          # Allopneus ; 
 VENTES_S1, COUT_REVIENT_S1, RD_S1, COMMERCIAUX_S1, GENERAUX_S1 = 13028, 9358, 396, 577, 1215   # M€, rapport semestriel 2025, p. 17
 MARGE_CIBLE = 0.117                                               # marge Automobile 2025 de Michelin (communiqué annuel)
 PLAFOND, HANKOOK_MARCHE = 93.20, 80.99                            # Continental et Hankook chez Allopneus, 1er octobre 2026
-PRIX_PSYCHOLOGIQUE = 94.90                                        # enquête de prix psychologique, 60 répondants (partie 3)
 HANKOOK_TEST, KM_HANKOOK, KM_MICHELIN = 81.99, 40000, 50000       # le scénario de notre test A/B (partie 4)
 
 net_actuel = PRIX_ACTUEL / (1 + TVA) * (1 - MARGE_DISTRIBUTEUR)      # ce que Michelin touche par pneu
@@ -702,7 +701,6 @@ TROIS = {
     "plancher_complet": cout_complet / (1 - MARGE_DISTRIBUTEUR) * (1 + TVA),       # couvre tout, marge nulle
     "couts": cout_complet / (1 - MARGE_CIBLE) / (1 - MARGE_DISTRIBUTEUR) * (1 + TVA),  # coût complet + marge cible
     "concurrence": PLAFOND,
-    "valeur_percue": PRIX_PSYCHOLOGIQUE,
     "valeur_usage": HANKOOK_TEST / KM_HANKOOK * KM_MICHELIN,                      # même coût pour 10 000 km que le Hankook
 }
 
@@ -721,8 +719,7 @@ def trois_prix(nom):
     # les fourchettes, en bandeau clair, décrites sous la bande (texte calé à droite sur la fin de la bande)
     for a, b, y, texte_ in [(TROIS["plancher_revient"], TROIS["plancher_complet"], 82,
                              f"planchers : {fr(TROIS['plancher_revient'])} € (fabrication) à {fr(TROIS['plancher_complet'])} € (tous les coûts)"),
-                            (HANKOOK_MARCHE, PLAFOND, 142, f"concurrents : {fr(HANKOOK_MARCHE)} € (Hankook) à {fr(PLAFOND)} € (Continental)"),
-                            (TROIS["valeur_percue"], TROIS["valeur_usage"], 202, "")]:
+                            (HANKOOK_MARCHE, PLAFOND, 142, f"concurrents : {fr(HANKOOK_MARCHE)} € (Hankook) à {fr(PLAFOND)} € (Continental)")]:
         c.append(f'<rect x="{x(a):.1f}" y="{y - 6}" width="{x(b) - x(a):.1f}" height="12" rx="6" fill="{CIEL}"/>')
         if texte_:
             c.append(T(x(b), y + 22, texte_, 10.5, GRIS, "end"))
@@ -735,14 +732,13 @@ def trois_prix(nom):
         c.append(point(x(TROIS[cle]), 82, NEUTRE, f"plancher : {fr(TROIS[cle])} €", r=4))
     for cle, y, texte_, dy, dx in [("couts", 82, f"{fr(TROIS['couts'])} € · coûts + marge cible", -20, -40),
                                    ("concurrence", 142, f"{fr(PLAFOND)} € · plafond", -20, -30),
-                                   ("valeur_percue", 202, f"{fr(PRIX_PSYCHOLOGIQUE)} € · valeur perçue", 22, -40),
                                    ("valeur_usage", 202, f"{fr(TROIS['valeur_usage'])} € · valeur d'usage", -20, -52)]:
         v = TROIS[cle]
         c.append(point(x(v), y, B_, texte_, r=6))
         c.append(pastille(x(v) + dx, y + dy, texte_, ENCRE))
     return svg(nom, larg, 262, "Trois logiques de prix sur une même échelle",
                f"Par les coûts : {fr(TROIS['couts'])} € (planchers {fr(TROIS['plancher_revient'])} et {fr(TROIS['plancher_complet'])} €) ; "
-               f"par la concurrence : plafond {fr(PLAFOND)} € ; par la valeur : {fr(PRIX_PSYCHOLOGIQUE)} € perçus, {fr(TROIS['valeur_usage'])} € d'usage ; "
+               f"par la concurrence : plafond {fr(PLAFOND)} € ; par la valeur : {fr(TROIS['valeur_usage'])} € d'usage ; "
                f"prix défendu {fr(PRIX_ACTUEL)} €.", "".join(c))
 
 
@@ -753,7 +749,6 @@ SCHEMAS["trois-prix"] = figure(1, "trois logiques, trois prix, sur une même éc
                                               ("Coûts : coût complet", f"{fr(TROIS['plancher_complet'])} €", "en dessous, Michelin perd de l'argent sur chaque pneu"),
                                               ("Coûts : coût complet + marge cible de 11,7 %", f"{fr(TROIS['couts'])} €", "le prix qui garde la marge du groupe"),
                                               ("Concurrence : plafond", f"{fr(PLAFOND)} €", "le plus cher des concurrents premium (Continental)"),
-                                              ("Valeur perçue : prix psychologique", f"{fr(PRIX_PSYCHOLOGIQUE)} €", "le plus d'acheteurs déclarés (58 %)"),
                                               ("Valeur d'usage", f"{fr(TROIS['valeur_usage'])} €", "même coût pour 10 000 km que le Hankook"),
                                               ("Prix défendu", f"{fr(PRIX_ACTUEL)} €", "le prix actuel, maintenu")]), large=True)
 
@@ -931,7 +926,7 @@ valeur_usage = 81.99 / 40_000 * 50_000                              # {fr(TROIS[
 
 # 2. Le dessin : une même échelle, de 65 € à gauche à 105 € à droite
 x = lambda prix: 150 + (prix - 65) / 40 * 450
-for prix in [prix_couts, prix_concurrence, 94.90, valeur_usage]:
+for prix in [prix_couts, prix_concurrence, valeur_usage]:
     point(x(prix))
 trait_vertical(x(97.90))                                            # le prix que nous défendons"""
     raise KeyError(k)
