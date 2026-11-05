@@ -21,7 +21,7 @@
 <body>
 <header class="haut"><div class="wrap">
 <a class="marque" href="index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#FCE500"/><circle cx="20" cy="20" r="18" fill="none" stroke="#0F2A5C" stroke-width="3" stroke-dasharray="5 3.4"/><circle cx="20" cy="20" r="10" fill="#27509B"/><circle cx="20" cy="20" r="3.4" fill="#FCE500"/></svg><span>Michelin<small>CrossClimate 3 · dossier de prix</small></span></a>
-<nav aria-label="Navigation principale"><a href="index.html">1 · Comptes</a><a href="marche.html">2 · Le marché</a><a href="prix-psychologique.html">3 · Prix psychologique</a><a href="client.html" aria-current="page">4 · Test A/B</a><a href="proposition.html">5 · Proposition</a><a href="synthese.html">Synthèse</a><a href="sources.html">Sources</a></nav>
+<nav aria-label="Navigation principale"><a href="index.html">1 · Comptes</a><a href="marche.html">2 · Le marché</a><a href="prix-psychologique.html">3 · Prix psychologique</a><a href="client.html" aria-current="page">4 · Test A/B</a><a href="proposition.html">5 · Proposition</a></nav>
 </div></header>
 <section class="hero"><div class="wrap">
 <span class="kicker">Partie 4 · Notre test A/B · 108 répondants</span>
@@ -30,16 +30,6 @@
 </div></section>
 <main><div class="wrap">
 
-<h2>Le chemin de cette partie</h2>
-<ol class="flux">
-<li><a href="#question">La question</a><span>marque ou durée de vie ?</span></li>
-<li><a href="#donnees">Qui a répondu</a><span>108 réponses, deux groupes</span></li>
-<li class="cle"><a href="#controle">Le contrôle</a><span>la durée a-t-elle été vue ?</span></li>
-<li class="cle"><a href="#test">Le résultat</a><span>45 % contre 67 %</span></li>
-<li><a href="#conclure">Ce qu'on peut conclure</a><span>et ce qu'on ne peut pas</span></li>
-<li><a href="#pourquoi">Le pourquoi</a><span>durée de vie et fidélité</span></li>
-<li class="cle"><a href="#decision">La décision</a><span>ce que vaut l'effet en euros</span></li>
-</ol>
 <div class="encart"><b>Comment lire les schémas.</b> Sous chaque schéma, trois cases : <b>ce qu'on voit</b> (le chiffre qui compte), <b>ce que cela veut dire</b> (la conclusion), <b>ce que cela ne dit pas</b> (la limite). Survolez une barre ou un point pour lire sa valeur ; « Voir les chiffres du schéma » ouvre le tableau des données, et « Voir le code de ce graphique » le code qui l'a dessiné.</div>
 
 <h2 id="question">La question</h2>
@@ -533,6 +523,7 @@ def fr(x, d=2):
 <li><b>Un tirage au sort imparfait</b> sur le kilométrage, contrôlé dans la régression.</li>
 <li><b>Quatre réponses probablement en double</b>, gardées ; le résultat ne change pas sans elles.</li>
 <li><b>Un écran qui change deux choses à la fois</b> : la durée de vie et le coût pour 10 000 km qui en découle.</li>
+<li><b>Un questionnaire aux couleurs bleu et jaune</b>, qui évoquent Michelin : cela peut le favoriser dans les deux versions, sans fausser l'écart entre A et B.</li>
 <li><b>Un choix à prix fixé</b> : le test ne dit pas jusqu'où les clients iraient au-dessus de 97,90 €.</li>
 </ul>
 
@@ -544,7 +535,7 @@ def fr(x, d=2):
 <footer><div class="wrap">
 <p><strong>Prix et budgets marketing</strong> — M1 Marketing · IAE Clermont Auvergne · UCA · 2026-2027 · Groupe : [noms des membres]</p>
 <p>Projet étudiant sans lien avec Michelin : la charte (bleu, jaune) s'inspire de la marque à titre d'illustration. Questionnaire collecté du 22 octobre au 3 novembre 2026 ; analyses sur 108 réponses exploitables, avec le squelette du cours d'Analyse de données.
-Site statique, sans cookie ; seul le questionnaire enregistre des réponses, anonymes. <a href="sources.html">Sources, méthode et usage de l'IA</a>.</p>
+Site statique, sans cookie ; seul le questionnaire enregistre des réponses, anonymes. <b>Usage de l'IA</b> : Claude Code nous a servi à mettre en forme ce site, à programmer le questionnaire, l'analyse des réponses et les schémas ; chaque chiffre a été vérifié à sa source, donnée en lien dans la phrase qui l'utilise.</p>
 </div></footer>
 </body>
 </html>
