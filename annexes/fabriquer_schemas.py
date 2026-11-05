@@ -685,74 +685,6 @@ SCHEMAS["decision"] = figure(1, "l'arbre de décision du dossier", decision("dec
 
 
 
-# ---- Les trois prix : par les coûts, par la concurrence, par la valeur ---------------------------------------------
-# Chaque terme vient d'une source du dossier ; la construction détaillée est écrite dans la partie 4 (proposition.html).
-PRIX_ACTUEL, TVA, MARGE_DISTRIBUTEUR = 97.90, 0.20, 0.12          # Allopneus ; TVA ; Bsness (12 % du prix HT)
-VENTES_S1, COUT_REVIENT_S1, RD_S1, COMMERCIAUX_S1, GENERAUX_S1 = 13028, 9358, 396, 577, 1215   # M€, rapport semestriel 2025, p. 17
-MARGE_CIBLE = 0.117                                               # marge Automobile 2025 de Michelin (communiqué annuel)
-PLAFOND, HANKOOK_MARCHE = 93.20, 80.99                            # Continental et Hankook chez Allopneus, 1er octobre 2026
-HANKOOK_TEST, KM_HANKOOK, KM_MICHELIN = 81.99, 40000, 50000       # le scénario de notre test A/B (partie 3)
-
-net_actuel = PRIX_ACTUEL / (1 + TVA) * (1 - MARGE_DISTRIBUTEUR)      # ce que Michelin touche par pneu
-cout_complet = net_actuel * (COUT_REVIENT_S1 + RD_S1 + COMMERCIAUX_S1 + GENERAUX_S1) / VENTES_S1
-cout_revient = net_actuel * COUT_REVIENT_S1 / VENTES_S1
-TROIS = {
-    "plancher_revient": cout_revient / (1 - MARGE_DISTRIBUTEUR) * (1 + TVA),       # ne couvre que la fabrication
-    "plancher_complet": cout_complet / (1 - MARGE_DISTRIBUTEUR) * (1 + TVA),       # couvre tout, marge nulle
-    "couts": cout_complet / (1 - MARGE_CIBLE) / (1 - MARGE_DISTRIBUTEUR) * (1 + TVA),  # coût complet + marge cible
-    "concurrence": PLAFOND,
-    "valeur_usage": HANKOOK_TEST / KM_HANKOOK * KM_MICHELIN,                      # même coût pour 10 000 km que le Hankook
-}
-
-
-def trois_prix(nom):
-    """Les trois logiques sur une même échelle en euros, et le prix que nous défendons."""
-    larg, gauche, droite, haut, bas = 620, 150, 600, 44, 236
-    x = lambda v: gauche + (v - 65) / 40 * (droite - gauche)
-    c = []
-    for v in range(65, 110, 5):
-        c.append(L(x(v), haut, x(v), bas))
-        c.append(T(x(v), bas + 16, f"{v} €", 10.5, GRIS, "middle"))
-    lignes = [("Par les coûts", 82), ("Par la concurrence", 142), ("Par la valeur", 202)]
-    for lib, y in lignes:
-        c.append(T(8, y + 4, lib, 12.5, BLEU_FONCE, gras=True))
-    # les fourchettes, en bandeau clair, décrites sous la bande (texte calé à droite sur la fin de la bande)
-    for a, b, y, texte_ in [(TROIS["plancher_revient"], TROIS["plancher_complet"], 82,
-                             f"planchers : {fr(TROIS['plancher_revient'])} € (fabrication) à {fr(TROIS['plancher_complet'])} € (tous les coûts)"),
-                            (HANKOOK_MARCHE, PLAFOND, 142, f"concurrents : {fr(HANKOOK_MARCHE)} € (Hankook) à {fr(PLAFOND)} € (Continental)")]:
-        c.append(f'<rect x="{x(a):.1f}" y="{y - 6}" width="{x(b) - x(a):.1f}" height="12" rx="6" fill="{CIEL}"/>')
-        if texte_:
-            c.append(T(x(b), y + 22, texte_, 10.5, GRIS, "end"))
-    # le prix défendu, en trait vertical
-    xd = x(PRIX_ACTUEL)
-    c.append(L(xd, haut - 8, xd, bas, BLEU_FONCE, 2))
-    c.append(T(xd - 6, haut - 14, f"{fr(PRIX_ACTUEL)} € : le prix que nous défendons", 12, BLEU_FONCE, "end", gras=True))
-    # les points, chacun avec sa pastille (au-dessus ou au-dessous, décalée si besoin pour rester dans le cadre)
-    for cle in ("plancher_revient", "plancher_complet"):
-        c.append(point(x(TROIS[cle]), 82, NEUTRE, f"plancher : {fr(TROIS[cle])} €", r=4))
-    for cle, y, texte_, dy, dx in [("couts", 82, f"{fr(TROIS['couts'])} € · coûts + marge cible", -20, -40),
-                                   ("concurrence", 142, f"{fr(PLAFOND)} € · plafond", -20, -30),
-                                   ("valeur_usage", 202, f"{fr(TROIS['valeur_usage'])} € · valeur d'usage", -20, -52)]:
-        v = TROIS[cle]
-        c.append(point(x(v), y, B_, texte_, r=6))
-        c.append(pastille(x(v) + dx, y + dy, texte_, ENCRE))
-    return svg(nom, larg, 262, "Trois logiques de prix sur une même échelle",
-               f"Par les coûts : {fr(TROIS['couts'])} € (planchers {fr(TROIS['plancher_revient'])} et {fr(TROIS['plancher_complet'])} €) ; "
-               f"par la concurrence : plafond {fr(PLAFOND)} € ; par la valeur : {fr(TROIS['valeur_usage'])} € d'usage ; "
-               f"prix défendu {fr(PRIX_ACTUEL)} €.", "".join(c))
-
-
-SCHEMAS["trois-prix"] = figure(1, "trois logiques, trois prix, sur une même échelle (prix public TTC du pneu)", trois_prix("tro"),
-                               leg=[("prix retenu par chaque logique", B_), ("plancher", NEUTRE)],
-                               table=tableau(["Logique", "Prix TTC", "Ce qu'il dit"],
-                                             [("Coûts : fabrication seule", f"{fr(TROIS['plancher_revient'])} €", "en dessous, chaque pneu ne paie même pas sa fabrication"),
-                                              ("Coûts : coût complet", f"{fr(TROIS['plancher_complet'])} €", "en dessous, Michelin perd de l'argent sur chaque pneu"),
-                                              ("Coûts : coût complet + marge cible de 11,7 %", f"{fr(TROIS['couts'])} €", "le prix qui garde la marge du groupe"),
-                                              ("Concurrence : plafond", f"{fr(PLAFOND)} €", "le plus cher des concurrents premium (Continental)"),
-                                              ("Valeur d'usage", f"{fr(TROIS['valeur_usage'])} €", "même coût pour 10 000 km que le Hankook"),
-                                              ("Prix défendu", f"{fr(PRIX_ACTUEL)} €", "le prix actuel, maintenu")]), large=True)
-
-
 # ---- les versions courtes du code, montrées dans les bandeaux ----------------------------------------------------
 INTRO_COURT = ("Le principe, en version courte : d'abord les chiffres, calculés sur les réponses, puis le dessin "
                "(les valeurs en commentaire sont celles du graphique). Le code complet, avec tous les réglages de mise en page, "
@@ -916,19 +848,6 @@ boite("La marque seule : 45 %")  ;  boite("La durée de vie : 67 %")
 fleche(question, baisser)  ;  fleche(question, garder)
 fleche(garder, duree_de_vie, couleur=VERT)          # la branche validée par le test A/B
 boite("Recommandation : maintenir 97,90 € et vendre la durée de vie")"""
-    if k == "trois-prix":
-        return f"""# 1. Les trois prix
-net = 97.90 / 1.20 * (1 - 0.12)                                    # ce que touche Michelin : {fr(net_actuel)} €
-cout_complet = net * (9358 + 396 + 577 + 1215) / 13028             # {fr(cout_complet)} €
-prix_couts = cout_complet / (1 - 0.117) / (1 - 0.12) * 1.20        # {fr(TROIS["couts"])} €
-prix_concurrence = 93.20                                            # Continental
-valeur_usage = 81.99 / 40_000 * 50_000                              # {fr(TROIS["valeur_usage"])} €
-
-# 2. Le dessin : une même échelle, de 65 € à gauche à 105 € à droite
-x = lambda prix: 150 + (prix - 65) / 40 * 450
-for prix in [prix_couts, prix_concurrence, valeur_usage]:
-    point(x(prix))
-trait_vertical(x(97.90))                                            # le prix que nous défendons"""
     raise KeyError(k)
 
 
@@ -949,12 +868,12 @@ def resume_barres(bloc):
 
 
 def resume_td2(bloc):
-    noms = ["coût de revient", "autres coûts", "résultat", "distributeur", "TVA"]
-    rects = [re.sub(r"\s*class=\"seg\"|\s*stroke=\"#fff\" stroke-width=\"2\"", "", r) + "/>" for r in re.findall(r'<rect class="seg"[^>]*', bloc)][:5]
+    noms = ["coût de revient", "autres coûts", "coût de revient", "autres coûts", "variation (la campagne)"]
+    rects = [re.sub(r"\s*class=\"seg\"|\s*stroke=\"#fff\" stroke-width=\"2\"|<title>.*", "", r) + "/>" for r in re.findall(r'<rect class="seg"[^>]*>(?:<title>[^<]*</title>)?', bloc)]
     lignes = "\n".join(f"{r}   <!-- {n} -->" for r, n in zip(rects, noms))
-    return ("<!-- 3 pixels par euro, 0 € en bas (y = 340) : un segment de 51,57 € fait 154,7 pixels de haut -->\n" + lignes
-            + '\n<use href="#col" x="180"/>   <!-- la même colonne, recopiée pour la version B -->\n'
-            '<line y1="60.4" y2="60.4" stroke="#C2410C" stroke-dasharray="6 4"/>   <!-- le plafond de Continental, 93,20 € -->')
+    return ("<!-- 2,8 pixels par euro, 0 € en bas (y = 340) : un segment de 70,32 € fait 196,9 pixels de haut -->\n" + lignes
+            + '\n<line y1="71.5" y2="71.5" stroke="#C2410C" stroke-dasharray="6 4"/>   <!-- le plafond de Continental, 95,90 € -->'
+            + '\n<line y1="65.9" y2="65.9" stroke="#0F2A5C"/>   <!-- le prix actuel, 97,90 € -->')
 
 
 def resume_graph(bloc):
@@ -973,7 +892,7 @@ BRIQUES = [T, L, barre_v, barre_h, point, boite, fleche, defs_fleches, svg, past
 CODE = {"modele": [modele], "modele-apres": [modele], "tirage": [groupes], "moderation": [groupes], "controle": [divergentes],
         "jauge-d": [jauge], "jauge-v": [jauge], "choix": [colonnes_ic], "robustesse": [robustesse], "precision": [precision],
         "puissance": [courbe_puissance], "logit": [foret], "mediation": [mediation], "echelles": [poids],
-        "rentabilite": [rentabilite], "decision": [decision], "trois-prix": [trois_prix]}
+        "rentabilite": [rentabilite], "decision": [decision]}
 
 
 def bandeau(intro, code):
@@ -1026,8 +945,8 @@ CSS_GRAPH = "\n".join(l for l in (SITE / "style.css").read_text(encoding="utf-8"
 INTRO_GRAPH = ("Graphique SVG écrit directement dans la page : la grille et les axes sont des &lt;line&gt;, chaque courbe est un "
                "&lt;path&gt; dont les points (un prix, une part de répondants) sont convertis en pixels, les points marqués sont des "
                "&lt;circle&gt; et la zone du prix retenu un &lt;rect&gt; ; la feuille de style <code>style.css</code> lui donne son cadre.")
-INTRO_TD2 = ("Dessin SVG écrit directement dans la page : chaque segment est un rectangle &lt;rect&gt; dont la hauteur vaut 3 pixels "
-             "par euro (0 € en y = 340, 100 € en y = 40) ; la seconde colonne réutilise la première avec &lt;use&gt;.")
+INTRO_TD2 = ("Dessin SVG écrit directement dans la page : chaque segment est un rectangle &lt;rect&gt; dont la hauteur vaut 2,8 pixels "
+             "par euro (0 € en y = 340) ; les deux lignes horizontales sont le prix actuel et le plafond des concurrents.")
 
 
 # =================================================================================================================
