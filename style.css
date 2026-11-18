@@ -202,3 +202,11 @@ details.code-fig>summary::after{content:"Afficher";margin-left:auto;background:v
 details.code-fig[open]>summary::after{content:"Masquer"}
 details.code-fig .note{margin:0 12px 8px}
 details.code-fig pre.code{margin:0 10px 10px;max-height:460px;overflow:auto;font-size:12px}
+
+/* Encadré « En bref » en tête de la partie 4 */
+.synthese{background:#fff;border:1px solid var(--trait);border-top:6px solid var(--jaune);border-radius:var(--rayon);padding:22px 24px;margin:8px 0 34px}
+.synthese>h2{margin-top:0}
+.synth-grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:18px 28px}
+.synth-grille h3{margin:0 0 8px;font-size:1.02rem;color:var(--bleu)}
+.synth-grille p{margin:0}
+.synth-grille ul.puces{margin:0}
